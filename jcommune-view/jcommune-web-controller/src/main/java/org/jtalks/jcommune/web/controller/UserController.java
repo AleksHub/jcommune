@@ -86,7 +86,7 @@ public class UserController {
     private static final String REMEMBER_ME_ON = "on";
     protected static final String ATTR_USERNAME = "username";
     protected static final String ATTR_LOGIN_ERROR = "login_error";
-    private static final int LOGIN_TRIES_AFTER_LOCK = 3;
+    public static final int LOGIN_TRIES_AFTER_LOCK = 3;
     private final UserService userService;
     private final Authenticator authenticator;
     private final PluginService pluginService;
@@ -400,17 +400,18 @@ public class UserController {
     private boolean loginWithLockingHandling(String username, String password, boolean rememberMeBoolean,
                                              HttpServletRequest request, HttpServletResponse response)
             throws UnexpectedErrorException, NoConnectionException {
-        for (int i = 0; i <= LOGIN_TRIES_AFTER_LOCK; i++) {
+        for (int i = 0; i < LOGIN_TRIES_AFTER_LOCK; i++) {
             try {
                 return userService.loginUser(username, password, rememberMeBoolean, request, response);
             } catch (HibernateOptimisticLockingFailureException e) {
-                if (i == LOGIN_TRIES_AFTER_LOCK) {
-                    LOGGER.error("User have been locked {} times. Username: {}",
-                            LOGIN_TRIES_AFTER_LOCK, username);
-                }
             }
         }
-        return false;
+        try {
+            return userService.loginUser(username, password, rememberMeBoolean, request, response);
+        } catch (HibernateOptimisticLockingFailureException e) {
+            LOGGER.error("User have been locked {} times. Username: {}", LOGIN_TRIES_AFTER_LOCK, username);
+            throw e;
+        }
     }
 
     /**
