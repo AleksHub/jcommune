@@ -340,7 +340,7 @@ public class UserController {
         boolean rememberMeBoolean = rememberMe.equals(REMEMBER_ME_ON);
         boolean isAuthenticated;
         try {
-            isAuthenticated = loginWithLockingHandling(username, password, rememberMeBoolean, request, response);
+            isAuthenticated = loginWithLockHandling(username, password, rememberMeBoolean, request, response);
         } catch (NoConnectionException e) {
             return new JsonResponse(JsonResponseStatus.FAIL,
                     new ImmutableMap.Builder<String, String>().put("customError", "connectionError").build());
@@ -378,7 +378,7 @@ public class UserController {
         boolean rememberMeBoolean = rememberMe.equals(REMEMBER_ME_ON);
         boolean isAuthenticated;
         try {
-            isAuthenticated = loginWithLockingHandling(username, password, rememberMeBoolean, request, response);
+            isAuthenticated = loginWithLockHandling(username, password, rememberMeBoolean, request, response);
         } catch (NoConnectionException e) {
             return new ModelAndView(AUTH_SERVICE_FAIL_URL);
         } catch (UnexpectedErrorException e) {
@@ -397,7 +397,7 @@ public class UserController {
         }
     }
 
-    private boolean loginWithLockingHandling(String username, String password, boolean rememberMeBoolean,
+    private boolean loginWithLockHandling(String username, String password, boolean rememberMeBoolean,
                                              HttpServletRequest request, HttpServletResponse response)
             throws UnexpectedErrorException, NoConnectionException {
         for (int i = 0; i < LOGIN_TRIES_AFTER_LOCK; i++) {

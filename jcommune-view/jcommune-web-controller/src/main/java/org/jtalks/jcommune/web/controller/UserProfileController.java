@@ -198,7 +198,7 @@ public class UserProfileController {
         }
         long editedUserId = editedProfileDto.getUserId();
         checkPermissionsToEditProfile(editedUserId);
-        JCUser user = saveEditedProfileWithLockingHandling(editedUserId, editedProfileDto);
+        JCUser user = saveEditedProfileWithLockHandling(editedUserId, editedProfileDto);
         //redirect to the view profile page
         return new ModelAndView("redirect:/users/" + user.getId());
     }
@@ -248,7 +248,7 @@ public class UserProfileController {
         if (!jcuser.isAnonymous()) {
             try {
                 jcuser.setLanguage(languageFromRequest);
-                saveEditedProfileWithLockingHandling(jcuser.getId(), new EditUserProfileDto(jcuser));
+                saveEditedProfileWithLockHandling(jcuser.getId(), new EditUserProfileDto(jcuser));
             } catch (NotFoundException e) {
                 throw new ServletException("Language save failed.", e);
             }
@@ -258,7 +258,7 @@ public class UserProfileController {
         return "redirect:" + request.getHeader("Referer");
     }
 
-    private JCUser saveEditedProfileWithLockingHandling(long editedUserId, EditUserProfileDto editedProfileDto)
+    private JCUser saveEditedProfileWithLockHandling(long editedUserId, EditUserProfileDto editedProfileDto)
             throws NotFoundException {
         for (int i = 0; i < UserController.LOGIN_TRIES_AFTER_LOCK; i++) {
             try {
